@@ -72,6 +72,10 @@ async function classifyImage(canvas) {
     .toFloat()
     .div(255.0);
 
+  console.log("Tensor Shape:", imgTensor.shape);
+  console.log("Tensor Dtype:", imgTensor.dtype);
+  console.log("Tensor Data:", imgTensor.arraySync());
+
   const predictions = await model.predict(imgTensor).data();
   const labels = ["Camel", "Koala", "Orangutan", "Snow Leopard", "Squirrel", "Water Buffalo", "Zebra"];
 
