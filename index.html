@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mammals Classification</title>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.0.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.7.0"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -24,7 +25,7 @@
           <h2>Result</h2>
           <div class="row primary-result">
             <div id="primary-result" class="col-md-8">
-              <img id="result-image" src="placeholder.jpg" alt="Result" class="result-image">
+              <img id="result-image" src="./assets/placeholder.jpeg" alt="Result" class="result-image">
               <p><strong id="result-text"></strong></p>
             </div>
             <div class="col-md-4" id="other-results">
@@ -44,7 +45,7 @@
               <p>Rezky Dwisantika 5024221001</p>
             </div>
           </div>
-          <button class="classify-button" onclick="classifyImage()" style="margin-top: 20px;">
+          <button class="classify-button" onClick="window.location.reload();" style="margin-top: 20px;">
             <i class="fas fa-redo"></i> Classify Again
           </button>
         </div>
