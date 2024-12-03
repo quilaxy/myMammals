@@ -8,9 +8,6 @@ async function loadModel() {
         console.log("Loading model...");
         model = await tf.loadGraphModel('./tfjs_model/model.json');
         console.log("Model loaded successfully");
-
-        // Log input shape model
-        console.log("Model Input Shape:", model.inputs);
     } catch (error) {
         console.error("Error loading model:", error);
     }
@@ -92,30 +89,42 @@ async function classifyImage(canvas) {
     // Sort probabilities in descending order
     const sortedIndices = Array.from(probabilities.keys()).sort((a, b) => probabilities[b] - probabilities[a]);
 
-    // Highlight the top prediction
-    const primaryIndex = sortedIndices[0];
-    const resultTextElement = document.getElementById('result-text');
-    if (resultTextElement) {
-        resultTextElement.innerText = `${labels[primaryIndex]} (${(probabilities[primaryIndex] * 100).toFixed(2)}%)`;
-    } else {
-        console.error("Element with ID 'result-text' not found in the DOM.");
-    }
+    // Display all classes and probabilities as bars
+    const resultsContainer = document.getElementById('results');
+    resultsContainer.innerHTML = ""; // Clear previous results
 
-    // Display the next top 6 classes and probabilities
-    const resultContainer = document.getElementById('other-results');
-    if (resultContainer) {
-        resultContainer.innerHTML = ""; // Clear previous results
-        sortedIndices.slice(1, 7).forEach((index) => {
-            const className = labels[index];
-            const probability = (probabilities[index] * 100).toFixed(2);
-            const resultElement = document.createElement('p');
-            resultElement.innerText = `${className} (${probability}%)`;
-            resultContainer.appendChild(resultElement);
-        });
-    } else {
-        console.error("Element with ID 'other-results' not found in the DOM.");
-    }
+    sortedIndices.forEach((index, rank) => {
+        const className = labels[index];
+        const probability = (probabilities[index] * 100).toFixed(2);
+
+        // Create a container for the bar
+        const progressContainer = document.createElement('div');
+        progressContainer.classList.add('progress-container');
+
+        // Add class label
+        const labelElement = document.createElement('div');
+        labelElement.classList.add('class-label');
+        if (rank === 0) {
+            labelElement.classList.add('highlight'); // Highlight top prediction
+        }
+        labelElement.innerText = className;
+        progressContainer.appendChild(labelElement);
+
+        // Add progress bar
+        const progressBarContainer = document.createElement('div');
+        progressBarContainer.classList.add('progress');
+        const progressBar = document.createElement('div');
+        progressBar.classList.add('progress-bar');
+        progressBar.style.width = `${probability}%`;
+        progressBar.innerText = `${probability}%`;
+
+        // Add progress bar to the container
+        progressBarContainer.appendChild(progressBar);
+        progressContainer.appendChild(progressBarContainer);
+
+        // Add container to results
+        resultsContainer.appendChild(progressContainer);
+    });
 }
 
-// Ensure the model is loaded after the DOM is ready
 document.addEventListener("DOMContentLoaded", loadModel);

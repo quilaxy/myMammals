@@ -19,19 +19,14 @@
         <input type="file" id="file-input" style="display: none;" accept="image/*" onchange="processImage(event)">
         <p><i class="fas fa-upload"></i> Click to Upload Image</p>
       </div>
-      <div class="row">
-        <div class="col-md-8">
-          <h2>Result</h2>
-          <div class="row primary-result">
-            <div id="primary-result" class="col-md-8">
-              <img id="result-image" src="./assets/placeholder.jpeg" alt="Result" class="result-image">
-              <p><strong id="result-text"></strong></p>
-            </div>
-            <div class="col-md-4" id="other-results">
-              <!-- All classes will be dynamically added here by script.js -->
-            </div>
+      <div class="row primary-result">
+        <div id="primary-result" class="col-md-12">
+          <img id="result-image" src="./assets/placeholder.jpeg" alt="Result" class="result-image">
+          <div id="results">
+            <!-- Progress bars for classes will be dynamically added here -->
           </div>
         </div>
+      </div>
         <div class="col-md-4">
           <div class="button-container">
             <div class="group-info">
