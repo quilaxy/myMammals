@@ -1,10 +1,16 @@
 let model;
 
+// Log versi TensorFlow.js
+console.log("TensorFlow.js Version:", tf.version.tfjs);
+
 async function loadModel() {
     try {
         console.log("Loading model...");
-        model = await tf.loadGraphModel('./tfjs_model/model.json'); 
+        model = await tf.loadGraphModel('./tfjs_model/model.json');
         console.log("Model loaded successfully");
+
+        // Log input shape model
+        console.log("Model Input Shape:", model.inputs);
     } catch (error) {
         console.error("Error loading model:", error);
     }
@@ -61,34 +67,55 @@ async function classifyImage(canvas) {
         return;
     }
 
-    // Preprocess the image to match model input
+    // Preprocess the image
     const imgTensor = tf.browser.fromPixels(canvas)
-        .resizeBilinear([177, 177]) // Resize to 177x177
-        .expandDims(0) // Add batch dimension
+        .resizeBilinear([177, 177]) // Resize ke ukuran input model
+        .expandDims(0) // Tambahkan dimensi batch
         .toFloat()
-        .div(255.0); // Normalize pixel values to [0, 1]
+        .div(255.0) // Normalisasi nilai piksel ke [0, 1]
+        .sub(tf.tensor([0.485, 0.456, 0.406])) // Kurangi mean
+        .div(tf.tensor([0.229, 0.224, 0.225])); // Bagi std
 
     console.log("Preprocessed Tensor:", imgTensor.arraySync());
 
     // Perform prediction
-    const rawPredictions = await model.predict(imgTensor).data();
-    const predictions = tf.softmax(tf.tensor(rawPredictions)).arraySync(); // Convert logits to probabilities
+    const logits = await model.predict(imgTensor).data();
+    console.log("Logits:", logits);
+
+    // Apply softmax to convert logits to probabilities
+    const probabilities = tf.softmax(tf.tensor(logits)).arraySync();
+    console.log("Probabilities:", probabilities);
 
     // Define class labels
     const labels = ["Camel", "Koala", "Orangutan", "Snow Leopard", "Squirrel", "Water Buffalo", "Zebra"];
 
-    // Get top prediction
-    const sortedIndices = Array.from(predictions.keys()).sort((a, b) => predictions[b] - predictions[a]);
-    const primaryIndex = sortedIndices[0];
-    document.getElementById('result-text').innerText = `${labels[primaryIndex]} (${(predictions[primaryIndex] * 100).toFixed(2)}%)`;
+    // Sort probabilities in descending order
+    const sortedIndices = Array.from(probabilities.keys()).sort((a, b) => probabilities[b] - probabilities[a]);
 
-    // Display top 5 predictions
-    for (let i = 1; i <= 5; i++) {
-        const index = sortedIndices[i];
-        const resultElement = document.getElementById(`result${i + 1}`);
-        resultElement.innerText = `${labels[index]} (${(predictions[index] * 100).toFixed(2)}%)`;
-        resultElement.style.visibility = 'visible';
+    // Highlight the top prediction
+    const primaryIndex = sortedIndices[0];
+    const resultTextElement = document.getElementById('result-text');
+    if (resultTextElement) {
+        resultTextElement.innerText = `${labels[primaryIndex]} (${(probabilities[primaryIndex] * 100).toFixed(2)}%)`;
+    } else {
+        console.error("Element with ID 'result-text' not found in the DOM.");
+    }
+
+    // Display the next top 6 classes and probabilities
+    const resultContainer = document.getElementById('other-results');
+    if (resultContainer) {
+        resultContainer.innerHTML = ""; // Clear previous results
+        sortedIndices.slice(1, 7).forEach((index) => {
+            const className = labels[index];
+            const probability = (probabilities[index] * 100).toFixed(2);
+            const resultElement = document.createElement('p');
+            resultElement.innerText = `${className} (${probability}%)`;
+            resultContainer.appendChild(resultElement);
+        });
+    } else {
+        console.error("Element with ID 'other-results' not found in the DOM.");
     }
 }
 
+// Ensure the model is loaded after the DOM is ready
 document.addEventListener("DOMContentLoaded", loadModel);
