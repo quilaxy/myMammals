@@ -19,29 +19,26 @@
         <input type="file" id="file-input" style="display: none;" accept="image/*" onchange="processImage(event)">
         <p><i class="fas fa-upload"></i> Click to Upload Image</p>
       </div>
-      <div class="row primary-result">
-        <div id="primary-result" class="col-md-12">
-          <img id="result-image" src="./assets/placeholder.jpeg" alt="Result" class="result-image">
-          <div id="results">
-            <!-- Progress bars for classes will be dynamically added here -->
+      <div class="primary-result" id="primary-result">
+        <img id="result-image" src="./assets/placeholder.jpeg" alt="Result" class="result-image">
+        <div id="results"></div>
+      </div>
+      <div class="row">
+        <div class="col-md-8">
+          <div class="group-info">
+            <p>Group 9</p>
+            <p>Annafi Nur Jayani 5024211005</p>
+            <p>Rezky Dwisantika 5024221001</p>
           </div>
         </div>
-      </div>
         <div class="col-md-4">
           <div class="button-container">
-            <div class="group-info">
-              <p>Group 9</p>
-              <p>Annafi Nur Jayani 5024211005</p>
-              <p>Rezky Dwisantika 5024221001</p>
-            </div>
+            <button class="classify-button" onclick="location.reload();"><i class="fas fa-redo"></i> Classify Again</button>
           </div>
-          <button class="classify-button" onClick="window.location.reload();" style="margin-top: 20px;">
-            <i class="fas fa-redo"></i> Classify Again
-          </button>
         </div>
       </div>
     </div>
-    <div class="col-md-4" style="background-color: #e8dccd; border-radius: 10px; padding: 10px; margin-left: 0cm;">
+    <div class="col-md-4" style="background-color: #e8dccd; border-radius: 10px; padding: 10px;">
       <h4>Classes</h4>
       <ul class="classes-list">
         <li><img src="./assets/camel.jpg" alt="Camel"> Camel</li>
