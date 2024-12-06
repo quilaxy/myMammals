@@ -70,21 +70,24 @@ async function classifyImage(canvas) {
         .expandDims(0) // Tambahkan dimensi batch
         .toFloat()
         .div(255.0) // Normalisasi nilai piksel ke [0, 1]
-        .sub(tf.tensor([0.485, 0.456, 0.406])) // Kurangi mean
-        .div(tf.tensor([0.229, 0.224, 0.225])); // Bagi std
+        .sub(tf.tensor([0.4804, 0.4785, 0.4361])) // Kurangi mean
+        .div(tf.tensor([0.2149, 0.2122, 0.2146])); // Bagi std
 
     console.log("Preprocessed Tensor:", imgTensor.arraySync());
 
-    // Perform prediction
-    const logits = await model.predict(imgTensor).data();
-    console.log("Logits:", logits);
+    // // Perform prediction
+    // const logits = await model.predict(imgTensor).data();
+    // console.log("Logits:", logits);
 
-    // Apply softmax to convert logits to probabilities
-    const probabilities = tf.softmax(tf.tensor(logits)).arraySync();
+    // // Apply softmax to convert logits to probabilities
+    // const probabilities = tf.softmax(tf.tensor(logits)).arraySync();
+    // console.log("Probabilities:", probabilities);
+
+    const probabilities = await model.predict(imgTensor).data();
     console.log("Probabilities:", probabilities);
 
     // Define class labels
-    const labels = ["Camel", "Koala", "Orangutan", "Snow Leopard", "Squirrel", "Water Buffalo", "Zebra"];
+    const labels = ["Camel", "Dolphin", "Koala", "Orangutan", "Snow Leopard", "Water Buffalo", "Zebra"];
 
     // Sort probabilities in descending order
     const sortedIndices = Array.from(probabilities.keys()).sort((a, b) => probabilities[b] - probabilities[a]);
