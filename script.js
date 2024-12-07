@@ -1,6 +1,5 @@
 let model;
 
-// Log versi TensorFlow.js
 console.log("TensorFlow.js Version:", tf.version.tfjs);
 
 async function loadModel() {
@@ -66,28 +65,18 @@ async function classifyImage(canvas) {
 
     // Preprocess the image
     const imgTensor = tf.browser.fromPixels(canvas)
-        .resizeBilinear([177, 177]) // Resize ke ukuran input model
-        .expandDims(0) // Tambahkan dimensi batch
+        .resizeBilinear([177, 177])
+        .expandDims(0) // Batch Dimentions
         .toFloat()
-        .div(255.0) // Normalisasi nilai piksel ke [0, 1]
-        .sub(tf.tensor([0.4804, 0.4785, 0.4361])) // Kurangi mean
-        .div(tf.tensor([0.2149, 0.2122, 0.2146])); // Bagi std
+        .div(255.0) // Normalize pixel to [0,1]
 
-    console.log("Preprocessed Tensor:", imgTensor.arraySync());
-
-    // // Perform prediction
-    // const logits = await model.predict(imgTensor).data();
-    // console.log("Logits:", logits);
-
-    // // Apply softmax to convert logits to probabilities
-    // const probabilities = tf.softmax(tf.tensor(logits)).arraySync();
-    // console.log("Probabilities:", probabilities);
+    console.log("Input Shape (Tensor):", imgTensor.shape);  
+    console.log("Preprocessed Tensor (Array):", imgTensor.arraySync());
 
     const probabilities = await model.predict(imgTensor).data();
     console.log("Probabilities:", probabilities);
 
-    // Define class labels
-    const labels = ["Camel", "Dolphin", "Koala", "Orangutan", "Snow Leopard", "Water Buffalo", "Zebra"];
+    const labels = ["Arctic Fox", "Camel", "Dolphin", "Koala", "Orangutan", "Snow Leopard", "Water Buffalo"];
 
     // Sort probabilities in descending order
     const sortedIndices = Array.from(probabilities.keys()).sort((a, b) => probabilities[b] - probabilities[a]);
